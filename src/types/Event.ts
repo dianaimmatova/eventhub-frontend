@@ -1,4 +1,7 @@
-
+export type Category = {
+    id: string;
+    name: string;
+}
 
 export type EventData = {
  id: string;
@@ -8,6 +11,6 @@ export type EventData = {
  price: number;
  capacity: number;
  image: string;
- category: {id: string, name: string};
+ category: Category;
  freeSeats: number;
 }
