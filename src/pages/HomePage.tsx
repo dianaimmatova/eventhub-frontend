@@ -9,10 +9,17 @@ function HomePage() {
     const [categories, setCategories] = useState<Category[]>([])
 
     useEffect(() => {
-        fetch(`http://localhost:3000/events?search=${encodeURIComponent(search)}`)
+        const params = new URLSearchParams()
+        if (search) {
+            params.append('search', search)
+        }
+        if (categoryId) {
+            params.append('categoryId',  categoryId)
+        }
+        fetch(`http://localhost:3000/events?${params.toString()}`)
             .then((response) => response.json())
             .then((data) => setEvents(data))
-    }, [search])
+    }, [search, categoryId])
 
 
     useEffect(() => {
