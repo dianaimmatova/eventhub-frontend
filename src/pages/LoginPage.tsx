@@ -1,5 +1,48 @@
+import { useState } from "react";
+import { data, useNavigate } from "react-router-dom";
+
 function LoginPage() {
-    return <>Вход</>
+    const navigate = useNavigate()
+
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [error, setError] = useState('')
+
+    
+    
+    function handleSubmit() {
+        setError('')
+       
+        fetch('http://localhost:3000/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) })
+            .then(response => {
+                if (response.ok) {
+                    response.json().then(data => {
+                        localStorage.setItem('accessToken', data.accessToken)
+                        localStorage.setItem('refreshToken', data.refreshToken)
+                    })
+                    navigate('/ ')
+                    return
+                }
+                if (response.status === 401) {
+                    setError('Неверная почта или пароль')
+                    return
+                }
+                setError('Не удалось войти, попробуйте позже')
+            })
+            .catch(() => { setError('Нет связи с сервером') })
+
+    }
+    
+
+    return (
+        <>
+        <h1>Вход</h1>
+        <input type="email" placeholder="Электронная почта" value={email} onChange={(e) => setEmail(e.target.value)}/>
+        <input type="password" placeholder="Пароль" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <button onClick={handleSubmit}>Войти</button>
+        {error && <p>{error}</p>}
+        </>
+    )
 }
 
 export default LoginPage;
