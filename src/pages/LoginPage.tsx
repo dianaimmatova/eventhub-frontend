@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { data, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
     const navigate = useNavigate()
@@ -19,8 +19,8 @@ function LoginPage() {
                     response.json().then(data => {
                         localStorage.setItem('accessToken', data.accessToken)
                         localStorage.setItem('refreshToken', data.refreshToken)
+                        navigate('/')
                     })
-                    navigate('/ ')
                     return
                 }
                 if (response.status === 401) {
