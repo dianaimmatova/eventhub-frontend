@@ -1,11 +1,34 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
+    const navigate = useNavigate()
+
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
+
     
-    function handleSubmit() {}
+    
+    function handleSubmit() {
+        setError('')
+       
+        fetch('http://localhost:3000/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Вошел')
+                    return
+                }
+                if (response.status === 401) {
+                    setError('Неверная почта или пароль')
+                    return
+                }
+                setError('Не удалось войти, попробуйте позже')
+            })
+            .catch(() => { setError('Нет связи с сервером') })
+
+    }
+    
 
     return (
         <>
