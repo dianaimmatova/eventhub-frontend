@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 
 function LoginPage() {
     const navigate = useNavigate()
@@ -16,7 +16,11 @@ function LoginPage() {
         fetch('http://localhost:3000/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) })
             .then(response => {
                 if (response.ok) {
-                    console.log('Вошел')
+                    response.json().then(data => {
+                        localStorage.setItem('accessToken', data.accessToken)
+                        localStorage.setItem('refreshToken', data.refreshToken)
+                    })
+                    navigate('/ ')
                     return
                 }
                 if (response.status === 401) {
