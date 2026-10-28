@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import type { EventData } from "../types/Event";
 
 function EventCard({event} : {event: EventData}) {
@@ -17,6 +18,7 @@ function EventCard({event} : {event: EventData}) {
     <p>{event.address}</p>
     <p>{event.price === 0 ? "Бесплатно" : `${event.price} сом`}</p>
     <p>Осталось {event.freeSeats} мест</p>
+    <Link to={`/events/${event.id}`}>Подробнее</Link> 
      </>
    )
 }
