@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 function LoginPage() {
     const navigate = useNavigate()
+    const auth = useContext(AuthContext)
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -19,6 +21,7 @@ function LoginPage() {
                     response.json().then(data => {
                         localStorage.setItem('accessToken', data.accessToken)
                         localStorage.setItem('refreshToken', data.refreshToken)
+                        auth?.login()
                         navigate('/')
                     })
                     return
