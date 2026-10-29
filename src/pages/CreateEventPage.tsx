@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import type { Category } from "../types/Event";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function CreateEventPage() {
+    const navigate = useNavigate()
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
     const [date, setDate] = useState('')
@@ -24,7 +26,36 @@ function CreateEventPage() {
     ))
 
     function handleSubmit() {
+        setError('')
 
+        if(!title || !description || !date || !address || !price || !capacity || !image || !categoryId) {
+            setError('Заполните все поля')
+            return
+        }
+        if (Number(price) < 0) {
+            setError('Укажите правильную цену')
+            return
+        }
+        if (Number(capacity) < 1) {
+            setError('Укажите количество мест')
+            return
+        }
+
+        const token = localStorage.getItem('accessToken')
+
+        fetch('http://localhost:3000/events', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({title, description, date: new Date(date).toISOString(), address, price: Number(price), capacity: Number(capacity), image, categoryId}) })
+        .then((response) => {
+            if(response.ok) {
+                response.json().then(data => navigate(`/events/${data.id}`))
+                return
+            }
+            if(response.status === 401) {
+                setError('Войдите в аккаунт заново')
+                return
+            }
+            setError('Не удалось создать мероприятие')
+        })
+        .catch(() => { setError('Нет связи с сервером') })
     }
 
     return (
