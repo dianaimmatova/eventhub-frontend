@@ -6,6 +6,7 @@ import CreateEventPage from "./pages/CreateEventPage"
 import LoginPage from "./pages/LoginPage"
 import Header from "./components/Header"
 import { AuthProvider } from "./context/AuthContext"
+import MyEventsPage from "./pages/MyEventsPage"
 
 const App = () => {
   return (
@@ -19,6 +20,8 @@ const App = () => {
           <Route path="/register" element={<RegistrationPage />} />
           <Route path="/events/:id" element={<EventPage />} />
           <Route path="/events/new" element={<CreateEventPage />} />
+          <Route path="/my-events" element={<MyEventsPage />} />
+
         </Routes>
       </AuthProvider>
     </BrowserRouter>

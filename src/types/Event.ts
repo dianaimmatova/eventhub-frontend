@@ -12,7 +12,8 @@ export type EventData = {
  capacity: number;
  image: string;
  category: Category;
- freeSeats: number;
+ freeSeats?: number;
  description?: string;
  user?: { id: string, name: string }
+
 }
