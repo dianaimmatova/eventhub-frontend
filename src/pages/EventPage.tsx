@@ -9,20 +9,34 @@ function EventPage() {
     const auth = useContext(AuthContext)
     const navigate = useNavigate()
     const [message, setMessage] = useState('')
+    const [currentUserId, setCurrentUserId] = useState<string | null>(null)
 
-    
+
     function loadEvent() {
         fetch(`http://localhost:3000/events/${id}`)
-        .then(response => response.json())
-        .then(data => setEvent(data))
+            .then(response => response.json())
+            .then(data => setEvent(data))
     }
 
-    useEffect(() => {loadEvent()}, [id])
+    useEffect(() => { loadEvent() }, [id])
+
+    useEffect(() => {
+        if (!auth?.isLoggedIn) {
+            setCurrentUserId(null)
+            return
+        }
+
+        const token = localStorage.getItem('accessToken')
+        fetch('http://localhost:3000/auth/me', { headers: { 'Authorization': `Bearer ${token}` } })
+            .then((response) => response.json())
+            .then((data) => setCurrentUserId(data.id))
+    }, [auth?.isLoggedIn])
 
     if (!event) {
         return <p>Загрузка...</p>
     }
 
+    const isOwner = currentUserId !== null && currentUserId === event.user?.id
 
     function handleRegister() {
         setMessage('')
@@ -52,6 +66,25 @@ function EventPage() {
             .catch(() => { setMessage('Нет связи с сервером') })
     }
 
+    function handleDelete() {
+        if (!window.confirm('Удалить мероприятие?')) return;
+
+        const token = localStorage.getItem('accessToken')
+        fetch(`http://localhost:3000/events/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } })
+            .then(response => {
+                if (response.ok) {
+                    navigate('/')
+                    return
+                }
+                if (response.status === 403) {
+                    setMessage('Нельзя удалить чужое мероприятие')
+                    return
+                }
+                setMessage('Не удалось удалить')
+            })
+            .catch(() => {setMessage('Нет связи с сервером')})
+    }
+
     return (
         <>
             <p>{event.category.name}</p>
@@ -70,6 +103,8 @@ function EventPage() {
             <button onClick={handleRegister}>Записаться</button>
             {message && <p>{message}</p>}
             <p>{event.description}</p>
+
+            {isOwner && <button onClick={handleDelete}>Удалить</button>}
 
         </>
     )
