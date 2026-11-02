@@ -1,15 +1,24 @@
 import { useEffect, useState } from "react";
 import type { Category } from "../types/Event";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+
+
+function toLocalInput(iso: string) {
+    const d = new Date(iso)
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16)
+}
 
 function CreateEventPage() {
     const navigate = useNavigate()
+    const { id } = useParams()
+    const isEdit = id !== undefined
     const [form, setForm] = useState({
         title: '', description: '', date: '', address: '',
         price: '', capacity: '', image: '', categoryId: ''
     })
     const [categories, setCategories] = useState<Category[]>([])
     const [error, setError] = useState('')
+
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
         setForm({ ...form, [e.target.name]: e.target.value })
@@ -24,6 +33,17 @@ function CreateEventPage() {
     const categoryItems = categories.map((category) => (
         <option key={category.id} value={category.id}>{category.name}</option>
     ))
+
+
+    useEffect(() => {
+        if (!isEdit) {
+            return
+        }
+        fetch(`http://localhost:3000/events/${id}`)
+            .then(response => response.json())
+            .then(data => setForm({ title: data.title, description: data.description, address: data.address, image: data.image, price: String(data.price), capacity: String(data.capacity), categoryId: data.category.id, date: toLocalInput(data.date) }))
+    }, [id])
+
 
     function handleSubmit() {
         setError('')
@@ -42,8 +62,12 @@ function CreateEventPage() {
         }
 
         const token = localStorage.getItem('accessToken')
+        const method = isEdit ? 'PATCH' : 'POST'
+        const url = isEdit
+            ? `http://localhost:3000/events/${id}`
+            : 'http://localhost:3000/events'
 
-        fetch('http://localhost:3000/events', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ ...form, date: new Date(form.date).toISOString(), price: Number(form.price), capacity: Number(form.capacity)}) })
+        fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ ...form, date: new Date(form.date).toISOString(), price: Number(form.price), capacity: Number(form.capacity) }) })
             .then((response) => {
                 if (response.ok) {
                     response.json().then(data => navigate(`/events/${data.id}`))
@@ -60,7 +84,7 @@ function CreateEventPage() {
 
     return (
         <>
-            <h1>Создать мероприятие</h1>
+            <h1>{isEdit ? 'Редактировать мероприятие' : 'Создать мероприятие'}</h1>
             <input type="text" placeholder="Например, Летний джаз в Саду 'Эрмитаж'" name="title" value={form.title} onChange={handleChange} />
             <textarea placeholder="Расскажите, о чем ваше мероприятие, что ждет участников..." name="description" value={form.description} onChange={handleChange} />
             <input type="datetime-local" name="date" value={form.date} onChange={handleChange} />
@@ -72,7 +96,7 @@ function CreateEventPage() {
                 <option value="">Выберите категорию</option>
                 {categoryItems}
             </select>
-            <button onClick={handleSubmit}>Создать мероприятие</button>
+            <button onClick={handleSubmit}>{isEdit ? 'Сохранить' : 'Создать мероприятие'}</button>
             {error && <p>{error}</p>}
 
 

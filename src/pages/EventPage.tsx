@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import type { EventData } from "../types/Event";
 import { AuthContext } from "../context/AuthContext";
 
@@ -105,6 +105,7 @@ function EventPage() {
             <p>{event.description}</p>
 
             {isOwner && <button onClick={handleDelete}>Удалить</button>}
+            {isOwner && <Link to={`/events/${id}/edit`}>Редактировать</Link>}
 
         </>
     )
