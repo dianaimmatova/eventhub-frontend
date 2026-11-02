@@ -84,7 +84,7 @@ function CreateEventPage() {
 
     return (
         <>
-            <h1>Создать мероприятие</h1>
+            <h1>{isEdit ? 'Редактировать мероприятие' : 'Создать мероприятие'}</h1>
             <input type="text" placeholder="Например, Летний джаз в Саду 'Эрмитаж'" name="title" value={form.title} onChange={handleChange} />
             <textarea placeholder="Расскажите, о чем ваше мероприятие, что ждет участников..." name="description" value={form.description} onChange={handleChange} />
             <input type="datetime-local" name="date" value={form.date} onChange={handleChange} />
@@ -96,7 +96,7 @@ function CreateEventPage() {
                 <option value="">Выберите категорию</option>
                 {categoryItems}
             </select>
-            <button onClick={handleSubmit}>Создать мероприятие</button>
+            <button onClick={handleSubmit}>{isEdit ? 'Сохранить' : 'Создать мероприятие'}</button>
             {error && <p>{error}</p>}
 
 
