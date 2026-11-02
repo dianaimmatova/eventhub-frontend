@@ -2,6 +2,12 @@ import { useEffect, useState } from "react";
 import type { Category } from "../types/Event";
 import { useNavigate, useParams } from "react-router-dom";
 
+
+function toLocalInput(iso: string) {
+    const d = new Date(iso)
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16)
+}
+
 function CreateEventPage() {
     const navigate = useNavigate()
     const { id } = useParams()
@@ -28,14 +34,16 @@ function CreateEventPage() {
         <option key={category.id} value={category.id}>{category.name}</option>
     ))
 
+
     useEffect(() => {
         if (!isEdit) {
             return
         }
         fetch(`http://localhost:3000/events/${id}`)
             .then(response => response.json())
-            .then(data => setForm({ title: data.title, description: data.description, address: data.address, image: data.image, price: String(data.price), capacity: String(data.capacity), categoryId: data.category.id, date: '' }))
+            .then(data => setForm({ title: data.title, description: data.description, address: data.address, image: data.image, price: String(data.price), capacity: String(data.capacity), categoryId: data.category.id, date: toLocalInput(data.date) }))
     }, [id])
+
 
     function handleSubmit() {
         setError('')
