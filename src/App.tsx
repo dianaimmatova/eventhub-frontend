@@ -7,6 +7,7 @@ import LoginPage from "./pages/LoginPage"
 import Header from "./components/Header"
 import { AuthProvider } from "./context/AuthContext"
 import MyEventsPage from "./pages/MyEventsPage"
+import ProtectedRoute from "./components/ProtectedRoute"
 
 const App = () => {
   return (
@@ -19,9 +20,9 @@ const App = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegistrationPage />} />
           <Route path="/events/:id" element={<EventPage />} />
-          <Route path="/events/new" element={<CreateEventPage />} />
-          <Route path="/my-events" element={<MyEventsPage />} />
-          <Route path="/events/:id/edit" element={<CreateEventPage />} />
+          <Route path="/events/new" element={<ProtectedRoute><CreateEventPage /></ProtectedRoute>} />
+          <Route path="/my-events" element={<ProtectedRoute><MyEventsPage /></ProtectedRoute>} />
+          <Route path="/events/:id/edit" element={<ProtectedRoute><CreateEventPage /></ProtectedRoute>} />
 
         </Routes>
       </AuthProvider>
