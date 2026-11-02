@@ -21,6 +21,7 @@ const App = () => {
           <Route path="/events/:id" element={<EventPage />} />
           <Route path="/events/new" element={<CreateEventPage />} />
           <Route path="/my-events" element={<MyEventsPage />} />
+          <Route path="/events/:id/edit" element={<CreateEventPage />} />
 
         </Routes>
       </AuthProvider>

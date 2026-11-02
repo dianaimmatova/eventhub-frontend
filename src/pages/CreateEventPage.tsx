@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import type { Category } from "../types/Event";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function CreateEventPage() {
     const navigate = useNavigate()
+    const { id } = useParams()
+    const isEdit = id !== undefined
     const [form, setForm] = useState({
         title: '', description: '', date: '', address: '',
         price: '', capacity: '', image: '', categoryId: ''
     })
     const [categories, setCategories] = useState<Category[]>([])
     const [error, setError] = useState('')
+
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
         setForm({ ...form, [e.target.name]: e.target.value })
@@ -24,6 +27,15 @@ function CreateEventPage() {
     const categoryItems = categories.map((category) => (
         <option key={category.id} value={category.id}>{category.name}</option>
     ))
+
+    useEffect(() => {
+        if (!isEdit) {
+            return
+        }
+        fetch(`http://localhost:3000/events/${id}`)
+            .then(response => response.json())
+            .then(data => setForm({ title: data.title, description: data.description, address: data.address, image: data.image, price: String(data.price), capacity: String(data.capacity), categoryId: data.category.id, date: '' }))
+    }, [id])
 
     function handleSubmit() {
         setError('')
@@ -43,7 +55,7 @@ function CreateEventPage() {
 
         const token = localStorage.getItem('accessToken')
 
-        fetch('http://localhost:3000/events', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ ...form, date: new Date(form.date).toISOString(), price: Number(form.price), capacity: Number(form.capacity)}) })
+        fetch('http://localhost:3000/events', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ ...form, date: new Date(form.date).toISOString(), price: Number(form.price), capacity: Number(form.capacity) }) })
             .then((response) => {
                 if (response.ok) {
                     response.json().then(data => navigate(`/events/${data.id}`))
