@@ -62,8 +62,12 @@ function CreateEventPage() {
         }
 
         const token = localStorage.getItem('accessToken')
+        const method = isEdit ? 'PATCH' : 'POST'
+        const url = isEdit
+            ? `http://localhost:3000/events/${id}`
+            : 'http://localhost:3000/events'
 
-        fetch('http://localhost:3000/events', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ ...form, date: new Date(form.date).toISOString(), price: Number(form.price), capacity: Number(form.capacity) }) })
+        fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ ...form, date: new Date(form.date).toISOString(), price: Number(form.price), capacity: Number(form.capacity) }) })
             .then((response) => {
                 if (response.ok) {
                     response.json().then(data => navigate(`/events/${data.id}`))
