@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { EventData } from "../types/Event";
 import EventCard from "../components/EventCard";
+import { authFetch } from "../utils/api";
 
 function MyEventsPage() {
     const [tab, setTab] = useState('created')
@@ -8,15 +9,13 @@ function MyEventsPage() {
     const [myRegistrations, setMyRegistrations] = useState<EventData[]>([])
 
     useEffect(() => {
-        const token = localStorage.getItem('accessToken')
-        fetch('http://localhost:3000/events/my', {headers: {'Authorization': `Bearer ${token}` }})
+        authFetch('http://localhost:3000/events/my')
             .then((response) => response.json())
             .then((data) => setMyEvents(data))
     }, [])
     console.log(myEvents)
     useEffect(() => {
-        const token = localStorage.getItem('accessToken')
-        fetch('http://localhost:3000/registrations/my', {headers: {'Authorization': `Bearer ${token}`} })
+        authFetch('http://localhost:3000/registrations/my')
             .then((response) => response.json())
             .then((data) => setMyRegistrations(data))
     }, [])

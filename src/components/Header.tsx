@@ -15,6 +15,7 @@ function Header() {
                     <Link to='/events/new'>Создание мероприятия</Link>
                     <Link to='/my-events'>Мои мероприятия</Link>
                     <button onClick={() => auth?.logout()}>Выйти</button>
+                    
                 </>
             ) : (
                 <>

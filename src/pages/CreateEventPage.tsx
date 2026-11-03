@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Category } from "../types/Event";
 import { useNavigate, useParams } from "react-router-dom";
+import { authFetch } from "../utils/api";
 
 
 function toLocalInput(iso: string) {
@@ -61,13 +62,12 @@ function CreateEventPage() {
             return
         }
 
-        const token = localStorage.getItem('accessToken')
         const method = isEdit ? 'PATCH' : 'POST'
         const url = isEdit
             ? `http://localhost:3000/events/${id}`
             : 'http://localhost:3000/events'
 
-        fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ ...form, date: new Date(form.date).toISOString(), price: Number(form.price), capacity: Number(form.capacity) }) })
+        authFetch(url, { method, headers: { 'Content-Type': 'application/json'}, body: JSON.stringify({ ...form, date: new Date(form.date).toISOString(), price: Number(form.price), capacity: Number(form.capacity) }) })
             .then((response) => {
                 if (response.ok) {
                     response.json().then(data => navigate(`/events/${data.id}`))
