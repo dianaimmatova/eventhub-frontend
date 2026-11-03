@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import type { EventData } from "../types/Event";
 import { AuthContext } from "../context/AuthContext";
+import { authFetch } from "../utils/api";
 
 function EventPage() {
     const { id } = useParams()
@@ -26,8 +27,7 @@ function EventPage() {
             return
         }
 
-        const token = localStorage.getItem('accessToken')
-        fetch('http://localhost:3000/auth/me', { headers: { 'Authorization': `Bearer ${token}` } })
+        authFetch('http://localhost:3000/auth/me')
             .then((response) => response.json())
             .then((data) => setCurrentUserId(data.id))
     }, [auth?.isLoggedIn])
@@ -46,9 +46,7 @@ function EventPage() {
             return
         }
 
-        const token = localStorage.getItem('accessToken')
-
-        fetch('http://localhost:3000/registrations', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ eventId: id }) })
+        authFetch('http://localhost:3000/registrations', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ eventId: id }) })
             .then(response => {
                 if (response.ok) {
                     setMessage('Вы записаны')
@@ -69,8 +67,7 @@ function EventPage() {
     function handleDelete() {
         if (!window.confirm('Удалить мероприятие?')) return;
 
-        const token = localStorage.getItem('accessToken')
-        fetch(`http://localhost:3000/events/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } })
+        authFetch(`http://localhost:3000/events/${id}`, { method: 'DELETE' })
             .then(response => {
                 if (response.ok) {
                     navigate('/')
