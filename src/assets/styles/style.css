@@ -1,0 +1,222 @@
+body {
+    font-family: var(--primary-font);
+    background-color: var(--page-background-color);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Header */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--light-background-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header__inner {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    max-width: 1280px;
+    height: 64px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.header__logo {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.header__logo span {
+    color: var(--primary-color);
+}
+
+.header__nav {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    height: 100%;
+}
+
+.header__link {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    font-weight: 500;
+    color: var(--second-text-color);
+    border-bottom: 2px solid transparent;
+}
+
+.header__link:hover,
+.header__link.active {
+    color: var(--primary-color);
+}
+
+.header__link.active {
+    border-bottom-color: var(--primary-color);
+}
+
+.header__actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+}
+
+/* button */
+.btn {
+    display: inline-block;
+    padding: 10px 18px;
+    font-weight: 600;
+    color: var(--light-text-color);
+    background-color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: var(--hover-color);
+    border-color: var(--hover-color);
+}
+
+.btn--outline {
+    color: var(--text-color);
+    background-color: var(--light-background-color);
+    border-color: var(--border-color);
+}
+
+.btn--outline:hover {
+    color: var(--primary-color);
+    background-color: var(--light-background-color);
+    border-color: var(--primary-color);
+}
+
+.btn--block {
+    width: 100%;
+}
+
+/* Поля */
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.field__label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.field__required {
+    margin-left: 2px;
+    color: var(--danger-color);
+}
+
+.field__control {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 15px;
+    color: var(--text-color);
+    background-color: var(--light-background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field__control::placeholder {
+    color: var(--muted-color);
+}
+
+.field__control:hover {
+    border-color: var(--muted-color);
+}
+
+.field__control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--tag-background-color);
+}
+
+.field__control:disabled {
+    background-color: var(--page-background-color);
+    cursor: not-allowed;
+}
+
+textarea.field__control {
+    min-height: 140px;
+    resize: vertical;
+}
+
+select.field__control {
+    cursor: pointer;
+}
+
+/*  field-row: поля в одну строку  */
+.field-row {
+    display: flex;
+    gap: 16px;
+}
+
+.field-row>.field {
+    flex: 1;
+}
+
+
+/*  form-card  */
+.form-card {
+    max-width: 480px;
+    margin: 48px auto;
+    padding: 40px;
+    background-color: var(--light-background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+}
+
+.form-card--center .form-card__title,
+.form-card--center .form-card__subtitle {
+    text-align: center;
+}
+
+.form-card__title {
+    margin: 0 0 8px;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.form-card__subtitle {
+    margin: 0 0 32px;
+    color: var(--second-text-color);
+}
+
+.form-card__error {
+    margin: 0 0 16px;
+    color: var(--danger-color);
+    font-size: 14px;
+}
+
+.form-card__footer {
+    margin: 24px 0 0;
+    padding-top: 20px;
+    text-align: center;
+    color: var(--second-text-color);
+    border-top: 1px solid var(--border-color);
+}
+
+.form-card__footer a {
+    font-weight: 600;
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.form-card__footer a:hover {
+    text-decoration: underline;
+}
+
