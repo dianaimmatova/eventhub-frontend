@@ -59,9 +59,11 @@ function HomePage() {
                 </select>
             </div>
 
-            <div className="events-grid">
-                {listItems}
-            </div>
+            {events.length === 0 ? (
+                <p className="empty">Ничего не найдено. Попробуйте изменить поиск или категорию</p>
+            ) : (
+                <div className="events-grid">{listItems}</div>
+            )}
         </div>
     )
 }
