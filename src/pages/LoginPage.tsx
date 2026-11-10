@@ -53,7 +53,7 @@ function LoginPage() {
                 <input className="field__control" id="password" type="password" placeholder="Введите пароль" value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
 
-            {error && <p className="form-card__error">{error}</p>}
+            {error && <p className="error">{error}</p>}
 
             <button className="btn btn--lg btn--block" onClick={handleSubmit}>Войти</button>
 

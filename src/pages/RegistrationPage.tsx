@@ -62,7 +62,7 @@ function RegistrationPage() {
                 <input className="field__control" id="confirmPassword" type="password" placeholder="Введите пароль ещё раз" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
             </div>
 
-            {error && <p className="form-card__error">{error}</p>}
+            {error && <p className="error">{error}</p>}
 
             <button className="btn btn--lg btn--block" onClick={handleSubmit}>Зарегистрироваться</button>
 
