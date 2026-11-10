@@ -14,7 +14,7 @@ function HomePage() {
             params.append('search', search)
         }
         if (categoryId) {
-            params.append('categoryId',  categoryId)
+            params.append('categoryId', categoryId)
         }
         fetch(`http://localhost:3000/events?${params.toString()}`)
             .then((response) => response.json())
@@ -37,15 +37,32 @@ function HomePage() {
     ))
 
     return (
-        <>
-            <h1>Афиша мероприятий</h1>
-            <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} />
-            <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
-                <option value="">Все категории</option>
-                {categoryItems}
-            </select>
-            {listItems}
-        </>
+        <div className="page">
+            <h1 className="page__title">Афиша мероприятий</h1>
+            <p className="page__subtitle">Открывайте интересные события рядом с вами</p>
+
+            <div className="filters">
+                <input
+                    className="field__control filters__search"
+                    type="text"
+                    placeholder="Поиск мероприятий по названию..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                />
+                <select
+                    className="field__control filters__select"
+                    value={categoryId}
+                    onChange={(e) => setCategoryId(e.target.value)}
+                >
+                    <option value="">Все категории</option>
+                    {categoryItems}
+                </select>
+            </div>
+
+            <div className="events-grid">
+                {listItems}
+            </div>
+        </div>
     )
 }
 
