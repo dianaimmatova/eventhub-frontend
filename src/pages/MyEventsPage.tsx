@@ -7,17 +7,33 @@ function MyEventsPage() {
     const [tab, setTab] = useState('created')
     const [myEvents, setMyEvents] = useState<EventData[]>([])
     const [myRegistrations, setMyRegistrations] = useState<EventData[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState('')
 
     useEffect(() => {
-        authFetch('http://localhost:3000/events/my')
-            .then((response) => response.json())
-            .then((data) => setMyEvents(data))
-    }, [])
-    
-    useEffect(() => {
-        authFetch('http://localhost:3000/registrations/my')
-            .then((response) => response.json())
-            .then((data) => setMyRegistrations(data))
+        setLoading(true)
+        setError('')
+
+        Promise.all([
+            authFetch('http://localhost:3000/events/my'),
+            authFetch('http://localhost:3000/registrations/my'),
+        ])
+            .then((responses) => {
+                if (responses.some((response) => !response.ok)) {
+                    throw new Error('Не удалось загрузить мероприятия')
+                }
+                return Promise.all(responses.map((response) => response.json()))
+            })
+            .then(([events, registrations]) => {
+                setMyEvents(Array.isArray(events) ? events : [])
+                setMyRegistrations(Array.isArray(registrations) ? registrations : [])
+            })
+            .catch(() => {
+                setError('Не удалось загрузить мероприятия')
+                setMyEvents([])
+                setMyRegistrations([])
+            })
+            .finally(() => setLoading(false))
     }, [])
 
     const list = tab === 'created' ? myEvents : myRegistrations
@@ -42,7 +58,11 @@ function MyEventsPage() {
                 </button>
             </div>
 
-            {list.length === 0 ? (
+            {loading ? (
+                <p className="empty">Загрузка...</p>
+            ) : error ? (
+                <p className="error">{error}</p>
+            ) : list.length === 0 ? (
                 <p className="empty">
                     {tab === 'created'
                         ? 'Вы пока не создали ни одного мероприятия'
