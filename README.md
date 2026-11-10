@@ -1,75 +1,75 @@
-# React + TypeScript + Vite
+# EventHub (frontend)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Клиентская часть учебного проекта EventHub: афиша мероприятий. Здесь можно искать мероприятия и фильтровать их по категории, зарегистрироваться и войти в аккаунт, записаться на мероприятие, а также создавать, редактировать и удалять свои мероприятия.
 
-Currently, two official plugins are available:
+## Стек
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Vite, React, TypeScript
+- react-router-dom
+- Обычный CSS (именование по БЭМ, без библиотек)
+- lucide-react (иконки)
+- шрифт Inter
 
-## React Compiler
+## Возможности
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Афиша с поиском по названию и фильтром по категории
+- Страница мероприятия: описание, свободные места, запись
+- Регистрация и вход (JWT: access и refresh токены)
+- Мои мероприятия: вкладки «Созданные мной» и «Я записан»
+- Создание, редактирование и удаление своих мероприятий
+- Защищённые страницы (для невошедших переход на `/login`)
+- Состояния загрузки, ошибок и пустых списков
+- Адаптивная вёрстка
 
-## Expanding the ESLint configuration
+## Запуск
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Нужен Node.js 20 или новее (проект разрабатывался на 24).
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+1. Запусти бэкенд (см. ниже): он должен работать до фронтенда.
+2. Установи зависимости:
+   ```
+   npm install
+   ```
+3. Запусти проект:
+   ```
+   npm run dev
+   ```
+4. Открой в браузере `http://localhost:5173`.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Сборка для продакшена: `npm run build`.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Бэкенд
 
-```
+Репозиторий: `eventhub-backend` (GitHub: `dianaimmatova`).
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+- Адрес API: `http://localhost:3000`
+- Документация Swagger: `http://localhost:3000/api`
+- В бэкенде настроен CORS для `http://localhost:5173`, поэтому фронтенд нужно запускать именно на этом порту.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Адрес бэкенда сейчас прописан прямо в коде (переменные окружения не используются).
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Структура
 
 ```
+src/
+  assets/fonts/   шрифты Inter
+  components/     Header, EventCard, ProtectedRoute
+  context/        AuthContext (вход и выход)
+  pages/          страницы приложения
+  styles/         font, var, reset, style, media, index
+  types/          типы данных
+  utils/api.ts    authFetch: обновление токенов при 401
+```
+
+## Про хранение токенов
+
+Access и refresh токены хранятся в `localStorage`. Это простой вариант для учебного проекта, но у него есть компромисс: токены доступны любому скрипту на странице, поэтому при XSS-уязвимости их можно украсть.
+
+Более безопасный вариант: хранить refresh-токен в httpOnly-cookie, недоступной для JavaScript. Это запланировано отдельной веткой `feature/cookie-auth`.
+
+Ещё одна известная особенность: если два запроса одновременно получают 401, токены обновляются дважды.
+
+## Ограничения
+
+- Изображение мероприятия задаётся ссылкой, загрузки файла пока нет.
+- Отмены записи на мероприятие нет (в ТЗ её не было).
