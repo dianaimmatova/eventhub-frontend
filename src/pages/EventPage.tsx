@@ -12,12 +12,27 @@ function EventPage() {
     const navigate = useNavigate()
     const [message, setMessage] = useState('')
     const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+    const [error, setError] = useState('')
 
 
     function loadEvent() {
         fetch(`http://localhost:3000/events/${id}`)
-            .then(response => response.json())
-            .then(data => setEvent(data))
+            .then(response => {
+                if (response.status === 404) {
+                    throw new Error('Мероприятие не найдено')
+                }
+                if (!response.ok) {
+                    throw new Error('Не удалось загрузить мероприятие')
+                }
+                return response.json()
+            })
+            .then(data => {
+                setError('')
+                setEvent(data)
+            })
+            .catch(err => setError(err.message === 'Мероприятие не найдено'
+                ? 'Мероприятие не найдено'
+                : 'Не удалось загрузить мероприятие'))
     }
 
     useEffect(() => { loadEvent() }, [id])
@@ -33,8 +48,20 @@ function EventPage() {
             .then((data) => setCurrentUserId(data.id))
     }, [auth?.isLoggedIn])
 
+    if (error) {
+        return (
+            <div className="page">
+                <Link to="/" className="back-link">
+                    <ArrowLeft size={18} />
+                    <span>Назад к мероприятиям</span>
+                </Link>
+                <p className="error">{error}</p>
+            </div>
+        )
+    }
+
     if (!event) {
-        return <p>Загрузка...</p>
+        return <div className="page"><p className="empty">Загрузка...</p></div>
     }
 
     const isOwner = currentUserId !== null && currentUserId === event.user?.id
