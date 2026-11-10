@@ -13,21 +13,47 @@ function MyEventsPage() {
             .then((response) => response.json())
             .then((data) => setMyEvents(data))
     }, [])
-    console.log(myEvents)
+    
     useEffect(() => {
         authFetch('http://localhost:3000/registrations/my')
             .then((response) => response.json())
             .then((data) => setMyRegistrations(data))
     }, [])
 
-    const list = tab === 'created' ? myEvents: myRegistrations      
+    const list = tab === 'created' ? myEvents : myRegistrations
 
     return (
-        <>
-            <button onClick={() => setTab('created')}>Созданные мной</button>
-            <button onClick={() => setTab('registered')}>Я записан</button>
-            {list.map(event => (<EventCard key={event.id} event={event} />))}
-        </>
+        <div className="page">
+            <h1 className="page__title">Мои мероприятия</h1>
+            <p className="page__subtitle">Мероприятия, которые вы создали или на которые записаны</p>
+
+            <div className="tabs">
+                <button
+                    className={tab === 'created' ? 'tabs__item tabs__item--active' : 'tabs__item'}
+                    onClick={() => setTab('created')}
+                >
+                    Созданные мной
+                </button>
+                <button
+                    className={tab === 'registered' ? 'tabs__item tabs__item--active' : 'tabs__item'}
+                    onClick={() => setTab('registered')}
+                >
+                    Я записан
+                </button>
+            </div>
+
+            {list.length === 0 ? (
+                <p className="empty">
+                    {tab === 'created'
+                        ? 'Вы пока не создали ни одного мероприятия'
+                        : 'Вы пока никуда не записаны'}
+                </p>
+            ) : (
+                <div className="events-grid">
+                    {list.map(event => (<EventCard key={event.id} event={event} />))}
+                </div>
+            )}
+        </div>
     )
 }
 

@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import type { EventData } from "../types/Event";
 import { AuthContext } from "../context/AuthContext";
 import { authFetch } from "../utils/api";
+import { ArrowLeft, Calendar, MapPin, User, Users, Wallet } from "lucide-react";
 
 function EventPage() {
     const { id } = useParams()
@@ -79,32 +80,82 @@ function EventPage() {
                 }
                 setMessage('Не удалось удалить')
             })
-            .catch(() => {setMessage('Нет связи с сервером')})
+            .catch(() => { setMessage('Нет связи с сервером') })
     }
 
     return (
-        <>
-            <p>{event.category.name}</p>
-            <h1>{event.title}</h1>
-            <p>{new Date(event.date).toLocaleString('ru-RU', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            })}</p>
-            <p>{event.address}</p>
-            <p>{event.price === 0 ? "Бесплатно" : `${event.price} сом`}</p>
-            <p>Осталось {event.freeSeats} мест из {event.capacity}</p>
-            <p>{event.user?.name}</p>
-            <button onClick={handleRegister}>Записаться</button>
-            {message && <p>{message}</p>}
-            <p>{event.description}</p>
+        <div className="page">
+            <Link to="/" className="back-link">
+                <ArrowLeft size={18} />
+                <span>Назад к мероприятиям</span>
+            </Link>
 
-            {isOwner && <button onClick={handleDelete}>Удалить</button>}
-            {isOwner && <Link to={`/events/${id}/edit`}>Редактировать</Link>}
+            <div className="event-details">
+                <div className="event-details__main">
+                    <div className="event-details__image">
+                        {event.image && (
+                            <img
+                                src={event.image}
+                                alt={event.title}
+                                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                            />
+                        )}
+                    </div>
 
-        </>
+                    <section className="event-details__about">
+                        <h2 className="event-details__about-title">О мероприятии</h2>
+                        <p className="event-details__description">{event.description}</p>
+                    </section>
+                </div>
+
+                <aside className="event-details__side">
+                    <span className="tag">{event.category.name}</span>
+                    <h1 className="event-details__title">{event.title}</h1>
+
+                    <p className="event-details__info">
+                        <Calendar size={20} />
+                        <span>
+                            {new Date(event.date).toLocaleString('ru-RU', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}
+                        </span>
+                    </p>
+                    <p className="event-details__info">
+                        <MapPin size={20} />
+                        <span>{event.address}</span>
+                    </p>
+                    <p className="event-details__info">
+                        <Wallet size={20} />
+                        <span>{event.price === 0 ? "Бесплатно" : `${event.price} сом`}</span>
+                    </p>
+                    <p className="event-details__info">
+                        <Users size={20} />
+                        <span>Осталось {event.freeSeats} мест из {event.capacity}</span>
+                    </p>
+                    <p className="event-details__info">
+                        <User size={20} />
+                        <span>{event.user?.name}</span>
+                    </p>
+
+                    <button className="btn btn--lg btn--block" onClick={handleRegister}>
+                        Записаться
+                    </button>
+
+                    {message && <p className="message">{message}</p>}
+
+                    {isOwner && (
+                        <div className="event-details__actions">
+                            <Link to={`/events/${id}/edit`} className="btn btn--outline">Редактировать</Link>
+                            <button className="btn btn--danger" onClick={handleDelete}>Удалить</button>
+                        </div>
+                    )}
+                </aside>
+            </div>
+        </div>
     )
 }
 
