@@ -8,6 +8,9 @@ function HomePage() {
     const [categoryId, setCategoryId] = useState('')
     const [categories, setCategories] = useState<Category[]>([])
 
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState('')
+
     useEffect(() => {
         const params = new URLSearchParams()
         if (search) {
@@ -17,8 +20,18 @@ function HomePage() {
             params.append('categoryId', categoryId)
         }
         fetch(`http://localhost:3000/events?${params.toString()}`)
-            .then((response) => response.json())
-            .then((data) => setEvents(data))
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Не удалось загрузить мероприятия')
+                }
+                return response.json()
+            })
+            .then((data) => setEvents(Array.isArray(data) ? data : []))
+            .catch(() => {
+                setError('Не удалось загрузить мероприятия')
+                setEvents([])
+            })
+            .finally(() => setLoading(false))
     }, [search, categoryId])
 
 
@@ -59,7 +72,11 @@ function HomePage() {
                 </select>
             </div>
 
-            {events.length === 0 ? (
+            {loading ? (
+                <p className="empty">Загрузка...</p>
+            ) : error ? (
+                <p className="error">{error}</p>
+            ) : events.length === 0 ? (
                 <p className="empty">Ничего не найдено. Попробуйте изменить поиск или категорию</p>
             ) : (
                 <div className="events-grid">{listItems}</div>
